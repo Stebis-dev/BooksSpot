@@ -1,6 +1,8 @@
 ﻿@*@model IEnumerable<Book>*@
 @*// create new model with book list and simple list*@
-@model BookSpot.Models.BookView
+
+@model BookView
+
 @{
     ViewData["Title"] = "Book list";
 }
@@ -23,15 +25,12 @@
         <div class="collapse" id="collapseExample">
             <div class="card card-body">
 
-                <form method="post">
-
+                @using (Html.BeginForm("FilterBooks", "Book", FormMethod.Post))
+                {
                     <table class="table-borderless table-sm" style="width:100%">
                         <tbody>
                             <tr>
                                 <td width="50%">
-                                   @* <div class="editor-label">  
-                                    @Html.LabelFor(model => model.Filter.BookTitle)  
-                                    </div>  *@
                                     <div class="mb-3">
                                         <label asp-for="Filter.BookTitle">Book Title</label>
                                         <input asp-for="Filter.BookTitle" class=" form-control" />
@@ -52,9 +51,6 @@
                                     </div>
                                 </td>
                                 <td width="50%">
-                                    <select asp-for="Filter.Genre" asp-items="Model.Genres">
-                                        <option value="">All</option>
-                                    </select>
                                 </td>
                             </tr>
                             <tr>
@@ -89,8 +85,7 @@
                     </table>
                     <button type="submit" class="btn btn-primary" style="width:150px">Apply</button>
                     <a asp-controller="Book" asp-action="Index" class="btn btn-secondary" style="width:150px">Clear</a>
-                
-                </form>
+                }
             </div>
         </div>
     </div>

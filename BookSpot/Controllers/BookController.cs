@@ -21,14 +21,15 @@ namespace BookSpot.Controllers
             IEnumerable<Book> objBookList = _db.Books;
             var bookView = new BookView
             {
-                Books = objBookList
+                Books = objBookList,
+                Filter = null
             };
             return View(bookView);
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> Index(BookView obj)
+        public async Task<IActionResult> FilterBooks(BookView bookFilter)
         {
             IQueryable<string> genreQuery = from m in _db.Books
                                             orderby m.Genre
@@ -36,31 +37,43 @@ namespace BookSpot.Controllers
 
             IEnumerable<Book> objBookList = _db.Books;
 
-
-            if (!String.IsNullOrEmpty(obj.Filter.BookTitle))
+            if (bookFilter.Filter?.BookTitle != null)
             {
-                objBookList = objBookList.Where(a => a.BookTitle!.Contains(obj.Filter.BookTitle));
+                objBookList = _db.Books.Where(x => x.BookTitle.ToLower().Contains(bookFilter.Filter.BookTitle.ToLower()));
             }
 
-            if (!String.IsNullOrEmpty(obj.Filter.Author))
+            if(bookFilter.Filter?.Genre != null)
             {
-                objBookList = objBookList.Where(a => a.Author!.Contains(obj.Filter.Author));
+                objBookList = objBookList.Where(x => x.Genre.ToLower().Contains(bookFilter.Filter.Genre.ToLower()));
             }
 
-            if (!String.IsNullOrEmpty(obj.Filter.Genre))
+            if (bookFilter.Filter?.Publisher != null)
             {
-                objBookList = objBookList.Where(a => a.Genre!.Contains(obj.Filter.Genre));
+                objBookList = objBookList.Where(x => x.Publisher.ToLower().Contains(bookFilter.Filter.Publisher.ToLower()));
             }
 
+            if (bookFilter.Filter?.Author != null)
+            {
+                objBookList = objBookList.Where(x => x.Author.ToLower().Contains(bookFilter.Filter.Author.ToLower()));
+            }
+
+            if (bookFilter.Filter?.ISBNcode != null)
+            {
+                objBookList = objBookList.Where(x => x.ISBNcode.Equals(bookFilter.Filter.ISBNcode));
+            }
+
+            if (bookFilter.Filter?.PublishingDate != DateTime.MinValue)
+            {
+                objBookList = objBookList.Where(x => x.PublishingDate.Date.Equals(bookFilter.Filter.PublishingDate.Date));
+            }
 
             var bookView = new BookView
             {
                 Books = objBookList,
-                Genres = new SelectList(await genreQuery.Distinct().ToListAsync()),
-                Filter = obj.Filter
+                Filter = bookFilter.Filter
             };
 
-            return View(bookView);
+            return View("Index", bookView);
         }
 
         // Add ---
