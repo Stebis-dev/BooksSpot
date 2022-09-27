@@ -1,0 +1,80 @@
+﻿@model Book
+@{
+    ViewData["Title"] = "Delete book";
+}
+<form method="post" asp-action="DeleteBook">
+    <input asp-for="Id" hidden />
+    <div class="border p-3 mt-4">
+        <div class="row pb-2"> 
+            <h2 class="text-primary">Delete a book</h2>
+            <hr />
+            <h3>Are you sure you want to delete a book?</h3>
+
+        </div>
+
+        <table class="table-borderless table-sm" style="width:100%">
+            <tbody>
+                <tr>
+                    <td width="50%">
+                        <div class="mb-3">
+                            <label asp-for="BookTitle"><h4>The title</h4></label>
+                            <input asp-for="BookTitle" disabled class="form-control" />
+                        </div>
+                    </td>
+                    <td width="50%">
+                        <div class="mb-3">
+                            <label asp-for="Author"><h4>Author</h4></label>
+                            <input asp-for="Author" disabled class="form-control" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">
+                        <div class="mb-3">
+                            <label asp-for="Genre"><h4>Genre</h4></label>
+                            <input asp-for="Genre" disabled class="form-control" />
+                        </div>
+                    </td>
+                    <td width="50%">
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">
+                        <div class="mb-3">
+                            <label asp-for="Publisher"><h4>Publisher</h4></label>
+                            <input asp-for="Publisher" disabled class="form-control" />
+                        </div>
+                    </td>
+                    <td width="50%">
+                        <div class="mb-3">
+                            <label asp-for="PublishingDate"><h4>Published Date</h4></label>
+                            <input asp-for="PublishingDate" disabled class="form-control" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <hr />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="mb-4">
+                            <label asp-for="ISBNcode"><h4>ISBN code</h4></label>
+                            <input asp-for="ISBNcode" disabled class="form-control" />
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn btn-danger" style="width:150px">Delete</button>
+        <a asp-controller="Book" asp-action="Index" class="btn btn-secondary" style="width:150px">Cancel</a>
+    </div>
+
+</form>
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
