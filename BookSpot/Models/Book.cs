@@ -30,11 +30,10 @@ namespace BookSpot.Models
         [Required]
         [DisplayName("Book genre")]
         public string? Genre { get; set; }
-        // can be a lot of diffrent genre books . . .
-
-        // book status : rezerve, taken, is in shop . . .
 
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
+
+        public BookStatus Status { get; set; } = BookStatus.Available;
 
     }
 }
