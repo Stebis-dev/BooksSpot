@@ -58,10 +58,18 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2">
+                    <td>
                         <div class="mb-4">
                             <label asp-for="ISBNcode"><h4>ISBN code</h4></label>
                             <input asp-for="ISBNcode" disabled class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="mb-4">
+                            <label><h4>Book status</h4></label>
+                            <select asp-for="Status" disabled class="form-select form-select-md mb-4" aria-label="Default select "
+                                    asp-items="Html.GetEnumSelectList<BookStatus>()">
+                            </select>
                         </div>
                     </td>
                 </tr>

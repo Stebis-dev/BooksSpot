@@ -27,7 +27,8 @@ namespace BookSpot.Controllers
             return View(bookView);
         }
 
-
+        // Filter
+        // POST
         [HttpPost]
         public async Task<IActionResult> FilterBooks(BookView bookFilter)
         {
@@ -60,6 +61,11 @@ namespace BookSpot.Controllers
             if (bookFilter.Filter?.ISBNcode != null)
             {
                 objBookList = objBookList.Where(x => x.ISBNcode.Equals(bookFilter.Filter.ISBNcode));
+            }
+
+            if (bookFilter.Filter?.Status != null)
+            {
+                objBookList = objBookList.Where(x => x.Status.Equals(bookFilter.Filter.Status));
             }
 
             if (bookFilter.Filter?.PublishingDate != DateTime.MinValue)

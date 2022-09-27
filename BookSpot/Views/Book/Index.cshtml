@@ -74,12 +74,22 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2">
+                                <td>
                                     <div class="mb-4">
                                         <label asp-for="Filter.ISBNcode">ISBN code</label>
                                         <input asp-for="Filter.ISBNcode" class="form-control" />
                                     </div>
                                 </td>
+                                <td>
+
+                                <div class="mb-4">
+                                    <label>Book status</label>
+                                    <select asp-for="Filter.Status" class="form-select form-select-md mb-4" aria-label="Default select "
+                                        asp-items="Html.GetEnumSelectList<BookStatus>()">
+                                    </select>
+                                </div>
+                                </td>
+
                             </tr>
                         </tbody>
                     </table>
@@ -128,8 +138,18 @@
                             @obj.PublishingDate.ToShortDateString()
                         </div>
                     </td>
-                    <td>
-                        @obj.Status
+                    <td class ="col text-center">
+                        @if (@obj.Status == BookStatus.Available){
+                            <span class="badge alert-success">@obj.Status</span>
+                        }
+                        else if (@obj.Status == BookStatus.Reserved)
+                        {
+                            <span class="badge alert-danger">@obj.Status</span>
+                        }
+                        else
+                        {   
+                            <span class="badge alert-warning">@obj.Status</span>
+                        }
                     </td>
                     <td class="col text-center">
                         <div class="col justify-content-center">

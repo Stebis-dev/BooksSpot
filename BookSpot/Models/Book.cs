@@ -31,9 +31,9 @@ namespace BookSpot.Models
         [DisplayName("Book genre")]
         public string? Genre { get; set; }
 
-        public DateTime CreatedDateTime { get; set; } = DateTime.Now;
-
+        [DisplayName("Book status")]
         public BookStatus Status { get; set; } = BookStatus.Available;
 
+        public DateTime CreatedDateTime { get; set; } = DateTime.Now;
     }
 }

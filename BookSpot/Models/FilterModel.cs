@@ -22,5 +22,8 @@ namespace BookSpot.Models
 
         [DisplayName("Book genre")]
         public string? Genre { get; set; }
+
+        [DisplayName("Book status")]
+        public BookStatus Status { get; set; } = BookStatus.Available;
     }
 }
