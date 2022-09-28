@@ -97,7 +97,7 @@ namespace BookSpot.Controllers
             {
                 _db.Books.Add(obj);
                 _db.SaveChanges();
-                //TempData["success"] = "Category created sucessfully";
+                TempData["success"] = "Book created sucessfully";
                 return RedirectToAction("Index");
             }
             return View(obj);
@@ -122,15 +122,11 @@ namespace BookSpot.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Book obj)
         {
-            //if (obj.Name == obj.DisplayOrder.ToString())
-            //{
-            //    ModelState.AddModelError("Name", "The Display Order cannot be the same as the Name");
-            //}
             if (ModelState.IsValid)
             {
                 _db.Books.Update(obj);
                 _db.SaveChanges();
-                //TempData["success"] = "Category created sucessfully";
+                TempData["success"] = "Book edited sucessfully";
                 return RedirectToAction("Index");
             }
             return View(obj);
@@ -164,7 +160,7 @@ namespace BookSpot.Controllers
 
             _db.Books.Remove(obj);
             _db.SaveChanges();
-            //TempData["success"] = "Category created sucessfully";
+            TempData["success"] = "Book deleted sucessfully";
             return RedirectToAction("Index");
         }
     }

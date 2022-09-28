@@ -19,7 +19,7 @@
     </div>
     
     <div>
-        <button class="btn btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+        <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
             <i class="bi bi-funnel"></i>&nbsp;&nbsp;Filter
         </button>
         <div class="collapse" id="collapseExample">
@@ -109,7 +109,7 @@
                 <th>
                     Publisher
                 </th>
-                <th>
+                <th class="col text-center">
                     Status
                 </th>
                 <th>
@@ -130,7 +130,7 @@
                         </div>
                         ISBN @obj.ISBNcode
                     </td>
-                    <td width="30%">
+                    <td width="30%" class="col text-begin align-middle">
                         <div>
                             @obj.Publisher
                         </div>
@@ -138,21 +138,21 @@
                             @obj.PublishingDate.ToShortDateString()
                         </div>
                     </td>
-                    <td class ="col text-center">
+                    <td class="col text-center align-middle">
                         @if (@obj.Status == BookStatus.Available){
                             <span class="badge alert-success">@obj.Status</span>
                         }
                         else if (@obj.Status == BookStatus.Reserved)
                         {
-                            <span class="badge alert-danger">@obj.Status</span>
+                            <span class="badge alert-warning">@obj.Status</span>
                         }
                         else
                         {   
-                            <span class="badge alert-warning">@obj.Status</span>
+                            <span class="badge alert-danger">@obj.Status</span>
                         }
                     </td>
-                    <td class="col text-center">
-                        <div class="col justify-content-center">
+                    <td class="col text-center align-middle">
+                        <div class="col justify-content-cente ">
                             <a asp-controller="Book" asp-action="Edit" asp-route-id="@obj.Id"
                             class="btn btn-primary mx-auto w-fill"><i class="bi bi-pencil-square"></i>&nbsp;&nbsp;Edit</a>
 
