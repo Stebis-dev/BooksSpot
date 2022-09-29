@@ -1,5 +1,6 @@
 ﻿using BookSpot.Data;
 using BookSpot.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,14 +10,22 @@ namespace BookSpot.Controllers
     public class BookController : Controller
     {
         private readonly ApplicationDbContext _db;
+        private UserManager<AppUser> _userManager { get; }
+        public bool IsUserSignedIn() => (User.Identity != null) && (User.Identity.IsAuthenticated);
 
-        public BookController(ApplicationDbContext db)
+
+        public BookController(ApplicationDbContext db, UserManager<AppUser> userMan)
         {
             _db = db;
+            _userManager = userMan;
         }
 
         public IActionResult Index()
         {
+            if (IsUserSignedIn()) { 
+                var user = _userManager.GetUserAsync(User).Result;
+                ViewBag.role = user?.AppUserRole;
+            }
             //pagination
             IEnumerable<Book> objBookList = _db.Books;
             var bookView = new BookView
@@ -32,6 +41,12 @@ namespace BookSpot.Controllers
         [HttpPost]
         public async Task<IActionResult> FilterBooks(BookView bookFilter)
         {
+            if (IsUserSignedIn())
+            {
+                var user = _userManager.GetUserAsync(User).Result;
+                ViewBag.role = user?.AppUserRole;
+            }
+
             IQueryable<string> genreQuery = from m in _db.Books
                                             orderby m.Genre
                                             select m.Genre;

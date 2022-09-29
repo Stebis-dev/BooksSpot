@@ -32,6 +32,21 @@
                         </li>
                     </ul>
                 </div>
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <div class="nav-item ">
+                        <a class="nav-link text-dark" href="/Identity/Account/Logout">Log out</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="nav-item ">
+                        <a class="nav-link text-dark" href="/Identity/Account/Register">Sign up</a>
+                    </div>
+                    <div class="nav-item">
+                        <a class="nav-link text-dark" href="/Identity/Account/Login">Sign in</a>
+                    </div>
+                }
             </div>
         </nav>
     </header>

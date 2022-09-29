@@ -11,13 +11,16 @@
         <div class="col-6">
             <h2 class="text-primary">Book list</h2>
         </div>
-     <div class="col-6 text-end">
-            <a asp-controller="Book" asp-action="Add" class="btn btn-primary">
-                <i class="bi bi-plus-square"></i>&nbsp;&nbsp;Add new book 
-            </a>
-        </div>
+
+        @if (User.Identity != null && User.Identity.IsAuthenticated && ViewBag.role == RoleModel.Admin)
+        {
+         <div class="col-6 text-end">
+                <a asp-controller="Book" asp-action="Add" class="btn btn-primary">
+                    <i class="bi bi-plus-square"></i>&nbsp;&nbsp;Add new book 
+                </a>
+            </div>
+        }   
     </div>
-    
     <div>
         <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
             <i class="bi bi-funnel"></i>&nbsp;&nbsp;Filter
@@ -112,8 +115,11 @@
                 <th class="col text-center">
                     Status
                 </th>
+                @if (User.Identity != null && User.Identity.IsAuthenticated && ViewBag.role == RoleModel.Admin)
+                {
                 <th>
                 </th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -151,15 +157,18 @@
                             <span class="badge alert-danger">@obj.Status</span>
                         }
                     </td>
-                    <td class="col text-center align-middle">
-                        <div class="col justify-content-cente ">
-                            <a asp-controller="Book" asp-action="Edit" asp-route-id="@obj.Id"
+                    @if (User.Identity != null && User.Identity.IsAuthenticated && ViewBag.role == RoleModel.Admin)
+                    {
+                        <td class="col text-center align-middle">
+                            <div class="col justify-content-cente ">
+                                <a asp-controller="Book" asp-action="Edit" asp-route-id="@obj.Id"
                             class="btn btn-primary mx-auto w-fill"><i class="bi bi-pencil-square"></i>&nbsp;&nbsp;Edit</a>
 
-                            <a asp-controller="Book" asp-action="Delete" asp-route-id="@obj.Id"
+                                <a asp-controller="Book" asp-action="Delete" asp-route-id="@obj.Id"
                             class="btn btn-danger mx-auto w-fill"><i class="bi bi-trash"></i>&nbsp;&nbsp;Delete</a>
-                        </div>
-                    </td>
+                            </div>
+                        </td>
+                    }
                 </tr>
             }
         </tbody>
