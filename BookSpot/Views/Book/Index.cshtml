@@ -115,58 +115,85 @@
                 <th class="col text-center">
                     Status
                 </th>
-                @if (User.Identity != null && User.Identity.IsAuthenticated && ViewBag.role == RoleModel.Admin)
+               @if (User.Identity != null && User.Identity.IsAuthenticated)
                 {
-                <th>
-                </th>
+                    <th>
+                    </th>
                 }
             </tr>
         </thead>
         <tbody>
-            @foreach (var obj in Model.Books)
+            @foreach (var book in Model.Books)
             {
                 <tr>
                     <td width="40%">
                         <div>
-                            <h4>"@obj.BookTitle"</h4>
-                            By: @obj.Author
+                            <h4>"@book.BookTitle"</h4>
+                            By: @book.Author
                         </div>
                         <div>
-                            Genre: @obj.Genre
+                            Genre: @book.Genre
                         </div>
-                        ISBN @obj.ISBNcode
+                        ISBN @book.ISBNcode
                     </td>
                     <td width="30%" class="col text-begin align-middle">
                         <div>
-                            @obj.Publisher
+                            @book.Publisher
                         </div>
                         <div>
-                            @obj.PublishingDate.ToShortDateString()
+                            @book.PublishingDate.ToShortDateString()
                         </div>
                     </td>
                     <td class="col text-center align-middle">
-                        @if (@obj.Status == BookStatus.Available){
-                            <span class="badge alert-success">@obj.Status</span>
+                        @if (book.Status == BookStatus.Available){
+                            <span class="badge alert-success">@book.Status</span>
                         }
-                        else if (@obj.Status == BookStatus.Reserved)
+                        else if (book.Status == BookStatus.Reserved)
                         {
-                            <span class="badge alert-warning">@obj.Status</span>
+                            <span class="badge alert-warning">@book.Status</span>
                         }
                         else
                         {   
-                            <span class="badge alert-danger">@obj.Status</span>
+                            <span class="badge alert-danger">@book.Status</span>
                         }
                     </td>
                     @if (User.Identity != null && User.Identity.IsAuthenticated && ViewBag.role == RoleModel.Admin)
                     {
                         <td class="col text-center align-middle">
                             <div class="col justify-content-cente ">
-                                <a asp-controller="Book" asp-action="Edit" asp-route-id="@obj.Id"
+                                <a asp-controller="Book" asp-action="Edit" asp-route-id="@book.Id"
                             class="btn btn-primary mx-auto w-fill"><i class="bi bi-pencil-square"></i>&nbsp;&nbsp;Edit</a>
 
-                                <a asp-controller="Book" asp-action="Delete" asp-route-id="@obj.Id"
+                                <a asp-controller="Book" asp-action="Delete" asp-route-id="@book.Id"
                             class="btn btn-danger mx-auto w-fill"><i class="bi bi-trash"></i>&nbsp;&nbsp;Delete</a>
                             </div>
+                            @if (book.Status != BookStatus.Available)
+                            {
+                                <div class="col justify-content-cente ">
+                                    <a asp-controller="Book" asp-action="ReturnBook" asp-route-id="@book.Id"
+                                    class="btn btn-primary mx-auto w-fill">Return</a>
+                                </div>
+                            }
+                        </td>
+                    }
+                    else if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                       
+                        <td class="col text-center align-middle">
+                            @if (book.Status == BookStatus.Available)
+                            {
+                                <div class="col justify-content-cente ">
+                                    <a asp-controller="Book" asp-action="ReserveBook" asp-route-id="@book.Id"
+                                    class="btn btn-primary mx-auto w-fill">Reserve</a>
+                                </div>
+                            }
+                            else if (book.Status == BookStatus.Reserved)
+                            {
+                                <div class="col justify-content-cente">
+                                    <a asp-controller="Book" asp-action="BorrowBook" asp-route-id="@book.Id"
+                                    class="btn btn-primary mx-auto w-fill">Borrow</a>
+                                </div>
+                            }
                         </td>
                     }
                 </tr>

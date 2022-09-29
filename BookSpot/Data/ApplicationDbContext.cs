@@ -18,5 +18,6 @@ namespace BookSpot.Data
             // Add your customizations after calling base.OnModelCreating(builder);
         }
         public DbSet<Book> Books { get; set; }
-    }
+        public DbSet<Reservation> Reservations { get; set; }
+}
 }

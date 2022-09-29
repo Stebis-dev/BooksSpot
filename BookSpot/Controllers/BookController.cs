@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace BookSpot.Controllers
 {
@@ -22,12 +23,28 @@ namespace BookSpot.Controllers
 
         public IActionResult Index()
         {
+            IEnumerable<Book> objBookList;
             if (IsUserSignedIn()) { 
                 var user = _userManager.GetUserAsync(User).Result;
                 ViewBag.role = user?.AppUserRole;
+
+                if (_userManager.GetUserAsync(User).Result.AppUserRole == RoleModel.Admin)
+                {
+                    objBookList = _db.Books;
+                }
+                else
+                {
+                    var foreignReservedBooks = _db.Reservations.Where(x => x.AppUserId != user.Id).Select(x => x.BookId).ToList();
+                    var books = _db.Books.Where(x => foreignReservedBooks.Contains(x.Id) == false);
+
+                    objBookList = books;
+                }
             }
-            //pagination
-            IEnumerable<Book> objBookList = _db.Books;
+            else 
+            {
+                objBookList = _db.Books;
+            }
+           
             var bookView = new BookView
             {
                 Books = objBookList,
@@ -41,21 +58,32 @@ namespace BookSpot.Controllers
         [HttpPost]
         public async Task<IActionResult> FilterBooks(BookView bookFilter)
         {
+            IEnumerable<Book> objBookList;
             if (IsUserSignedIn())
             {
                 var user = _userManager.GetUserAsync(User).Result;
                 ViewBag.role = user?.AppUserRole;
+
+                if (_userManager.GetUserAsync(User).Result.AppUserRole == RoleModel.Admin)
+                {
+                    objBookList = _db.Books;
+                }
+                else
+                {
+                    var foreignReservedBooks = _db.Reservations.Where(x => x.AppUserId != user.Id).Select(x => x.BookId).ToList();
+                    var books = _db.Books.Where(x => foreignReservedBooks.Contains(x.Id) == false);
+
+                    objBookList = books;
+                }
             }
-
-            IQueryable<string> genreQuery = from m in _db.Books
-                                            orderby m.Genre
-                                            select m.Genre;
-
-            IEnumerable<Book> objBookList = _db.Books;
+            else
+            {
+                objBookList = _db.Books;
+            }
 
             if (bookFilter.Filter?.BookTitle != null)
             {
-                objBookList = _db.Books.Where(x => x.BookTitle.ToLower().Contains(bookFilter.Filter.BookTitle.ToLower()));
+                objBookList = objBookList.Where(x => x.BookTitle.ToLower().Contains(bookFilter.Filter.BookTitle.ToLower()));
             }
 
             if(bookFilter.Filter?.Genre != null)
@@ -96,6 +124,98 @@ namespace BookSpot.Controllers
 
             return View("Index", bookView);
         }
+        // Reserve
+        // GET
+        public IActionResult ReserveBook (int id)
+        {
+            if (IsUserSignedIn())
+            {
+                var updateBook = new Reservation()
+                {
+                    BookId = id,
+                    AppUserId = _userManager.GetUserId(User)
+                };
+                var res = _db.Reservations.Where(x => x.BookId == id && x.AppUserId == updateBook.AppUserId).FirstOrDefault();
+                if(res != null)
+                {
+                    TempData["error"] = "Book not reserved";
+                    return RedirectToAction("Index");
+                }
+                _db.Reservations.Add(updateBook);
+                var book = _db.Books.Where(x => x.Id.Equals(id) && x.Status == BookStatus.Available).FirstOrDefault();
+                if (book != null)
+                {
+                    book.Status = BookStatus.Reserved;
+                    _db.Books.Update(book);
+                    _db.SaveChanges();
+                    TempData["success"] = "Book reserved sucessfully";
+                    return RedirectToAction("Index");
+                }
+                TempData["error"] = "Book not reserved";
+
+            }
+            return RedirectToAction("Index");
+        }
+        // Borrow
+        // GET
+        public IActionResult BorrowBook(int id)
+        {
+            if (IsUserSignedIn())
+            {
+                var updateBook = new Reservation()
+                {
+                    BookId = id,
+                    AppUserId = _userManager.GetUserId(User)
+                };
+                var res = _db.Reservations.Where(x => x.BookId == id && x.AppUserId == updateBook.AppUserId ).FirstOrDefault();
+                if (res == null)
+                {
+                    TempData["error"] = "Book cannot be borrowed";
+                    return RedirectToAction("Index");
+                }
+                var book = _db.Books.Where(x => x.Id.Equals(res.BookId) && x.Status == BookStatus.Reserved).FirstOrDefault();
+                if (book != null)
+                {
+                    book.Status = BookStatus.Borrowed;
+                    _db.Books.Update(book);
+                    _db.SaveChanges();
+                    TempData["success"] = "Book borrowed sucessfully";
+                    return RedirectToAction("Index");
+                }
+                TempData["error"] = "Book cannot be borrowed";
+
+            }
+            return RedirectToAction("Index");
+        }
+        // Return
+        // GET
+        public IActionResult ReturnBook(int id)
+        {
+            if (IsUserSignedIn())
+            {
+                var res = _db.Reservations.Where(x => x.BookId == id).FirstOrDefault();
+
+                if (res == null)
+                {
+                    TempData["error"] = "Book cannot be returned";
+                    return RedirectToAction("Index");
+                }
+                _db.Reservations.Remove(res);
+                var book = _db.Books.Where(x => x.Id.Equals(res.BookId)).FirstOrDefault();
+                if (book != null)
+                {
+                    book.Status = BookStatus.Available;
+                    _db.Books.Update(book);
+                    _db.SaveChanges();
+                    TempData["success"] = "Book returned sucessfully";
+                    return RedirectToAction("Index");
+                }
+                TempData["error"] = "Book cannot be returned";
+
+            }
+            return RedirectToAction("Index");
+        }
+
 
         // Add ---
         // GET
@@ -171,6 +291,12 @@ namespace BookSpot.Controllers
             if (obj == null)
             {
                 return NotFound();
+            }
+
+            var res = _db.Reservations.Where(x => x.BookId == id).FirstOrDefault();
+            if (res != null)
+            {
+                _db.Reservations.Remove(res);
             }
 
             _db.Books.Remove(obj);
