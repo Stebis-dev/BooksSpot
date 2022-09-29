@@ -21,6 +21,15 @@ namespace BookSpot.Controllers
             _userManager = userMan;
         }
 
+        public bool IsAdmin()
+        {
+            if (!IsUserSignedIn())
+            {
+                return false;
+            }
+            return (_userManager.GetUserAsync(User)?.Result.AppUserRole == RoleModel.Admin);
+        }
+
         public IActionResult Index()
         {
             IEnumerable<Book> objBookList;
@@ -28,7 +37,7 @@ namespace BookSpot.Controllers
                 var user = _userManager.GetUserAsync(User).Result;
                 ViewBag.role = user?.AppUserRole;
 
-                if (_userManager.GetUserAsync(User).Result.AppUserRole == RoleModel.Admin)
+                if (IsAdmin())
                 {
                     objBookList = _db.Books;
                 }
@@ -64,7 +73,7 @@ namespace BookSpot.Controllers
                 var user = _userManager.GetUserAsync(User).Result;
                 ViewBag.role = user?.AppUserRole;
 
-                if (_userManager.GetUserAsync(User).Result.AppUserRole == RoleModel.Admin)
+                if (IsAdmin())
                 {
                     objBookList = _db.Books;
                 }
@@ -191,6 +200,10 @@ namespace BookSpot.Controllers
         // GET
         public IActionResult ReturnBook(int id)
         {
+            if (!IsAdmin())
+            {
+                return RedirectToAction("Index");
+            }
             if (IsUserSignedIn())
             {
                 var res = _db.Reservations.Where(x => x.BookId == id).FirstOrDefault();
@@ -221,13 +234,21 @@ namespace BookSpot.Controllers
         // GET
         public IActionResult Add()
         {
+            if (!IsAdmin())
+            {
+                return RedirectToAction("Index");
+            }
             return View();
         }
         // POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Add(Book obj)
-        { 
+        {
+            if (!IsAdmin())
+            {
+                return RedirectToAction("Index");
+            }
             if (ModelState.IsValid)
             {
                 _db.Books.Add(obj);
@@ -241,6 +262,10 @@ namespace BookSpot.Controllers
         // GET
         public IActionResult Edit(int? id)
         {
+            if(!IsAdmin())
+            {
+                return RedirectToAction("Index");
+            }
             if (id == null || id == 0)
             {
                 return NotFound();
@@ -257,6 +282,10 @@ namespace BookSpot.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Book obj)
         {
+            if (!IsAdmin())
+            {
+                return RedirectToAction("Index");
+            }
             if (ModelState.IsValid)
             {
                 _db.Books.Update(obj);
@@ -270,6 +299,10 @@ namespace BookSpot.Controllers
         // GET
         public IActionResult Delete(int? id)
         {
+            if (!IsAdmin())
+            {
+                return RedirectToAction("Index");
+            }
             if (id == null || id == 0)
             {
                 return NotFound();
@@ -286,6 +319,10 @@ namespace BookSpot.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteBook(int? id)
         {
+            if (!IsAdmin())
+            {
+                return RedirectToAction("Index");
+            }
             var obj = _db.Books.Find(id);
 
             if (obj == null)
