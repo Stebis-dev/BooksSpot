@@ -10,3 +10,4 @@ Non logged-in users can view all books and their status. Logged-in users can see
 ```
 First registered user is set to be an admin (librarian)
 ```
+Before running the app, run ``Update-Database`` in Package Manager Console.
